@@ -1,0 +1,8 @@
+[workspace]
+members = [
+	"metrics-fn-codegen",
+]
+
+[profile.release]
+lto = true
+strip = true
