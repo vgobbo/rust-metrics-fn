@@ -19,6 +19,15 @@ pub enum Wants {
 }
 
 impl FnSignature {
+	pub fn rename(&self, name: String) -> FnSignature {
+		FnSignature {
+			is_pub: self.is_pub,
+			is_async: self.is_async,
+			name,
+			arguments: self.arguments.clone(),
+		}
+	}
+
 	pub fn call(&self, args: &[String]) -> proc_macro2::TokenStream {
 		let span = proc_macro2::Span::call_site();
 
