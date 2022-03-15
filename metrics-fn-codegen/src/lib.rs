@@ -21,12 +21,8 @@ pub fn measure(attr: TokenStream, item: TokenStream) -> TokenStream {
 	let span = proc_macro2::Span::call_site();
 
 	let signature = FnSignature::from(item.clone()).rename("wrapped".to_owned());
-	println!("{:#?}", signature);
-	println!("{:#?}", signature.argument_names());
-	println!(
-		"{:#?}",
-		signature.call(&["a".to_string(), "b".to_string(), "c".to_string()])
-	);
+	let fn_attributes = get_fn_attributes(item.clone());
+	let fn_body = get_fn_body(item.clone());
 
 	let wrapper = wrap_method(item);
 
@@ -58,6 +54,22 @@ fn get_signature(stream: proc_macro2::TokenStream) -> proc_macro2::TokenStream {
 	}
 
 	panic!("Parameter list not found.");
+}
+
+fn get_fn_attributes(stream: proc_macro2::TokenStream) -> proc_macro2::TokenStream {
+	let mut tokens = Vec::new();
+
+	let mut iter = stream.into_iter();
+	while let Some(token) = iter.next() {
+		if let TokenTree::Ident(ident) = &token {
+			if ident == "pub" || ident == "async" || ident == "fn" {
+				break;
+			}
+		}
+		tokens.push(token);
+	}
+
+	proc_macro2::TokenStream::from_iter(tokens.into_iter())
 }
 
 fn get_fn_body(stream: proc_macro2::TokenStream) -> TokenTree {
