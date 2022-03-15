@@ -9,13 +9,18 @@ mod fn_signature;
 use fn_signature::*;
 
 #[proc_macro_attribute]
+pub fn dummy(_attr: TokenStream, item: TokenStream) -> TokenStream {
+	item
+}
+
+#[proc_macro_attribute]
 pub fn measure(attr: TokenStream, item: TokenStream) -> TokenStream {
 	let attr = proc_macro2::TokenStream::from(attr);
 	let item = proc_macro2::TokenStream::from(item);
 
 	let span = proc_macro2::Span::call_site();
 
-	let signature = FnSignature::from(item.clone());
+	let signature = FnSignature::from(item.clone()).rename("wrapped".to_owned());
 	println!("{:#?}", signature);
 	println!("{:#?}", signature.argument_names());
 	println!(
@@ -53,4 +58,28 @@ fn get_signature(stream: proc_macro2::TokenStream) -> proc_macro2::TokenStream {
 	}
 
 	panic!("Parameter list not found.");
+}
+
+fn get_fn_body(stream: proc_macro2::TokenStream) -> TokenTree {
+	let mut iter = stream.into_iter();
+
+	// skip until the 'fn' keyword.
+	while let Some(token) = iter.next() {
+		if let TokenTree::Ident(ident) = token {
+			if ident == "fn" {
+				break;
+			}
+		}
+	}
+
+	// skip until a group with a brace delimiter.
+	while let Some(token) = iter.next() {
+		if let TokenTree::Group(group) = &token {
+			if group.delimiter() == Delimiter::Brace {
+				return token;
+			}
+		}
+	}
+
+	panic!("Function body not found.");
 }
