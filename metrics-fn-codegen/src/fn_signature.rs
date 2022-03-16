@@ -1,8 +1,8 @@
 use std::any::Any;
 
 use proc_macro::TokenStream;
-use proc_macro2::{Delimiter, Group, Ident, Punct, Spacing, TokenTree};
-use quote::{quote_spanned, ToTokens};
+use proc_macro2::{Delimiter, Group, Ident, Punct, Spacing, TokenStream as TokenStream2, TokenTree};
+use quote::{quote_spanned, ToTokens, TokenStreamExt};
 
 #[derive(Debug)]
 pub struct FnSignature {
@@ -28,7 +28,7 @@ impl FnSignature {
 		}
 	}
 
-	pub fn call(&self, args: &[String]) -> proc_macro2::TokenStream {
+	pub fn call(&self, args: &[String]) -> TokenStream2 {
 		let span = proc_macro2::Span::call_site();
 
 		let mut tokens = Vec::new();
@@ -37,7 +37,7 @@ impl FnSignature {
 		tokens.push(self.call_arguments(args));
 		tokens.push(TokenTree::Punct(Punct::new(';', Spacing::Alone)));
 
-		proc_macro2::TokenStream::from_iter(tokens.into_iter())
+		TokenStream2::from_iter(tokens.into_iter())
 	}
 
 	fn call_arguments(&self, args: &[String]) -> TokenTree {
@@ -59,7 +59,7 @@ impl FnSignature {
 
 		TokenTree::Group(Group::new(
 			Delimiter::Parenthesis,
-			proc_macro2::TokenStream::from_iter(tokens.into_iter()),
+			TokenStream2::from_iter(tokens.into_iter()),
 		))
 	}
 
@@ -86,7 +86,6 @@ impl FnSignature {
 					}
 				},
 			}
-			println!("{:#?}", token);
 		}
 
 		names
@@ -135,13 +134,13 @@ impl Default for FnSignature {
 			is_pub: false,
 			is_async: false,
 			name: "".to_owned(),
-			arguments: Group::new(Delimiter::Parenthesis, proc_macro2::TokenStream::new()),
+			arguments: Group::new(Delimiter::Parenthesis, TokenStream2::new()),
 		}
 	}
 }
 
-impl From<proc_macro2::TokenStream> for FnSignature {
-	fn from(stream: proc_macro2::TokenStream) -> Self {
+impl From<TokenStream2> for FnSignature {
+	fn from(stream: TokenStream2) -> Self {
 		let mut signature = FnSignature::default();
 
 		let mut iter = stream.into_iter();
@@ -168,5 +167,20 @@ impl From<proc_macro2::TokenStream> for FnSignature {
 		}
 
 		panic!("Parameter list not found.");
+	}
+}
+
+impl ToTokens for FnSignature {
+	fn to_tokens(&self, tokens: &mut TokenStream2) {
+		let span = proc_macro2::Span::call_site();
+		if self.is_pub {
+			tokens.append(TokenTree::from(Ident::new("pub", span)));
+		}
+		if self.is_async {
+			tokens.append(TokenTree::from(Ident::new("async", span)));
+		}
+		tokens.append(TokenTree::from(Ident::new("fn", span)));
+		tokens.append(TokenTree::from(Ident::new(self.name.as_str(), span)));
+		self.arguments.to_tokens(tokens);
 	}
 }
