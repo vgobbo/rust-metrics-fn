@@ -1,8 +1,8 @@
 use std::any::Any;
 
 use proc_macro::TokenStream;
-use proc_macro2::{Delimiter, Group, Ident, TokenTree};
-use quote::{quote_spanned, ToTokens};
+use proc_macro2::{Delimiter, Group, Ident, TokenStream as TokenStream2, TokenTree};
+use quote::{quote_spanned, ToTokens, TokenStreamExt};
 
 mod fn_signature;
 
@@ -15,16 +15,24 @@ pub fn dummy(_attr: TokenStream, item: TokenStream) -> TokenStream {
 
 #[proc_macro_attribute]
 pub fn measure(attr: TokenStream, item: TokenStream) -> TokenStream {
-	let attr = proc_macro2::TokenStream::from(attr);
-	let item = proc_macro2::TokenStream::from(item);
+	let attr = TokenStream2::from(attr);
+	let item = TokenStream2::from(item);
 
 	let span = proc_macro2::Span::call_site();
 
-	let signature = FnSignature::from(item.clone()).rename("wrapped".to_owned());
+	// parse the fn.
 	let fn_attributes = get_fn_attributes(item.clone());
+	let fn_signature = FnSignature::from(item.clone());
 	let fn_body = get_fn_body(item.clone());
 
-	let wrapper = wrap_method(item);
+	// map the fn to wrapper and wrapped variables
+	let wrapper_attributes = fn_attributes;
+	let wrapper_signature = fn_signature;
+	let wrapped_signature = wrapper_signature.rename("wrapped".to_owned());
+	let wrapped_body = fn_body;
+
+	// build the wrapped fn.
+	let wrapper = wrap(wrapper_attributes, wrapper_signature, wrapped_signature, wrapped_body);
 
 	let output = quote_spanned! { span =>
 		#wrapper
@@ -33,17 +41,16 @@ pub fn measure(attr: TokenStream, item: TokenStream) -> TokenStream {
 	output.into()
 }
 
-fn wrap_method(stream: proc_macro2::TokenStream) -> proc_macro2::TokenStream {
-	let mut tokens = Vec::new();
-	let mut iter = stream.clone().into_iter();
-	while let Some(token) = iter.next() {
-		tokens.push(token);
-	}
-
-	proc_macro2::TokenStream::from_iter(tokens.into_iter())
+fn wrap(
+	wrapper_attributes: TokenStream2,
+	wrapper_signature: FnSignature,
+	wrapped_signature: FnSignature,
+	wrapped_body: TokenTree,
+) -> TokenStream2 {
+	todo!()
 }
 
-fn get_signature(stream: proc_macro2::TokenStream) -> proc_macro2::TokenStream {
+fn get_signature(stream: TokenStream2) -> TokenStream2 {
 	let mut iter = stream.into_iter();
 	while let Some(token) = iter.next() {
 		if let TokenTree::Group(group) = token {
@@ -56,7 +63,7 @@ fn get_signature(stream: proc_macro2::TokenStream) -> proc_macro2::TokenStream {
 	panic!("Parameter list not found.");
 }
 
-fn get_fn_attributes(stream: proc_macro2::TokenStream) -> proc_macro2::TokenStream {
+fn get_fn_attributes(stream: TokenStream2) -> TokenStream2 {
 	let mut tokens = Vec::new();
 
 	let mut iter = stream.into_iter();
@@ -69,10 +76,10 @@ fn get_fn_attributes(stream: proc_macro2::TokenStream) -> proc_macro2::TokenStre
 		tokens.push(token);
 	}
 
-	proc_macro2::TokenStream::from_iter(tokens.into_iter())
+	TokenStream2::from_iter(tokens.into_iter())
 }
 
-fn get_fn_body(stream: proc_macro2::TokenStream) -> TokenTree {
+fn get_fn_body(stream: TokenStream2) -> TokenTree {
 	let mut iter = stream.into_iter();
 
 	// skip until the 'fn' keyword.
