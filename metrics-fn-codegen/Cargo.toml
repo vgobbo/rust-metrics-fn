@@ -7,5 +7,6 @@ edition = "2021"
 proc-macro = true
 
 [dependencies]
-quote = { version = "1.0" }
+log = { version = "0.4" }
 proc-macro2 = { version = "1.0" }
+quote = { version = "1.0" }
