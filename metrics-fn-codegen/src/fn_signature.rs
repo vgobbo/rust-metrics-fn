@@ -1,8 +1,5 @@
-use std::any::Any;
-
-use proc_macro::TokenStream;
 use proc_macro2::{Delimiter, Group, Ident, Punct, Spacing, TokenStream as TokenStream2, TokenTree};
-use quote::{quote_spanned, ToTokens, TokenStreamExt};
+use quote::{ToTokens, TokenStreamExt};
 
 #[derive(Debug)]
 pub struct FnSignature {
