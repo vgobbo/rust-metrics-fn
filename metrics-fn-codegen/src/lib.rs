@@ -1,8 +1,6 @@
-use std::any::Any;
-
 use proc_macro::TokenStream;
-use proc_macro2::{Delimiter, Group, Ident, TokenStream as TokenStream2, TokenTree};
-use quote::{quote_spanned, ToTokens, TokenStreamExt};
+use proc_macro2::{Delimiter, TokenStream as TokenStream2, TokenTree};
+use quote::quote_spanned;
 
 mod fn_signature;
 
@@ -14,11 +12,8 @@ pub fn dummy(_attr: TokenStream, item: TokenStream) -> TokenStream {
 }
 
 #[proc_macro_attribute]
-pub fn measure(attr: TokenStream, item: TokenStream) -> TokenStream {
-	let attr = TokenStream2::from(attr);
+pub fn measure(_attr: TokenStream, item: TokenStream) -> TokenStream {
 	let item = TokenStream2::from(item);
-
-	let span = proc_macro2::Span::call_site();
 
 	// parse the fn.
 	let fn_attributes = get_fn_attributes(item.clone());
@@ -32,11 +27,9 @@ pub fn measure(attr: TokenStream, item: TokenStream) -> TokenStream {
 	let wrapped_body = fn_body;
 
 	// build the wrapped fn.
-	let wrapper = wrap(wrapper_attributes, wrapper_signature, wrapped_signature, wrapped_body);
+	let output = wrap(wrapper_attributes, wrapper_signature, wrapped_signature, wrapped_body);
 
-	let output = quote_spanned! { span =>
-		#wrapper
-	};
+	println!("{}", output.to_string());
 
 	output.into()
 }
@@ -47,20 +40,26 @@ fn wrap(
 	wrapped_signature: FnSignature,
 	wrapped_body: TokenTree,
 ) -> TokenStream2 {
-	todo!()
-}
+	let span = proc_macro2::Span::call_site();
 
-fn get_signature(stream: TokenStream2) -> TokenStream2 {
-	let mut iter = stream.into_iter();
-	while let Some(token) = iter.next() {
-		if let TokenTree::Group(group) = token {
-			if group.delimiter() == Delimiter::Parenthesis {
-				return group.into_token_stream();
-			}
+	let wrapped_call = wrapped_signature.call(wrapped_signature.argument_names().as_slice());
+
+	let output = quote_spanned! { span =>
+		#wrapper_attributes
+		#wrapper_signature {
+			#wrapped_signature #wrapped_body
+
+			let start__ = std::time::Instant::now();
+			let output__ = #wrapped_call;
+			let end__ = std::time::Instant::now();
+
+			log::info!("Time {:?}", end__.duration_since(start__));
+
+			return output__;
 		}
-	}
+	};
 
-	panic!("Parameter list not found.");
+	output
 }
 
 fn get_fn_attributes(stream: TokenStream2) -> TokenStream2 {
