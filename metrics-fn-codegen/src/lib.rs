@@ -2,9 +2,9 @@ use proc_macro::TokenStream;
 use proc_macro2::{Delimiter, TokenStream as TokenStream2, TokenTree};
 use quote::quote_spanned;
 
-mod fn_signature;
+mod function;
 
-use fn_signature::*;
+use function::*;
 
 #[proc_macro_attribute]
 pub fn dummy(_attr: TokenStream, item: TokenStream) -> TokenStream {
@@ -17,7 +17,7 @@ pub fn measure(_attr: TokenStream, item: TokenStream) -> TokenStream {
 
 	// parse the fn.
 	let fn_attributes = get_fn_attributes(item.clone());
-	let fn_signature = FnSignature::from(item.clone());
+	let fn_signature = Function::from(item.clone());
 	let fn_body = get_fn_body(item.clone());
 
 	// map the fn to wrapper and wrapped variables
@@ -36,8 +36,8 @@ pub fn measure(_attr: TokenStream, item: TokenStream) -> TokenStream {
 
 fn wrap(
 	wrapper_attributes: TokenStream2,
-	wrapper_signature: FnSignature,
-	wrapped_signature: FnSignature,
+	wrapper_signature: Function,
+	wrapped_signature: Function,
 	wrapped_body: TokenTree,
 ) -> TokenStream2 {
 	let span = proc_macro2::Span::call_site();
