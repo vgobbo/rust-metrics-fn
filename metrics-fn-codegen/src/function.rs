@@ -26,12 +26,24 @@ impl Function {
     }
 
     pub fn call(&self, args: &[String]) -> TokenStream2 {
+        self.call_build(self.is_async, args)
+    }
+
+    fn call_build(&self, do_await: bool, args: &[String]) -> TokenStream2 {
         let span = proc_macro2::Span::call_site();
 
         let mut tokens = Vec::new();
 
         tokens.push(TokenTree::Ident(Ident::new(self.name.as_str(), span)));
         tokens.push(self.call_arguments(args));
+
+        if do_await {
+            if !self.is_async {
+                panic!("Not async.");
+            }
+            tokens.push(TokenTree::Ident(Ident::new("await", span)));
+        }
+
         tokens.push(TokenTree::Punct(Punct::new(';', Spacing::Alone)));
 
         TokenStream2::from_iter(tokens.into_iter())
