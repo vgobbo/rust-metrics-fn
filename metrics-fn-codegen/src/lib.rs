@@ -16,25 +16,24 @@ pub fn measure(_attr: TokenStream, item: TokenStream) -> TokenStream {
 	let item = TokenStream2::from(item);
 
 	// parse the fn.
-	let fn_attributes = get_fn_attributes(item.clone());
 	let fn_signature = Function::from(item.clone());
 
 	// map the fn to wrapper and wrapped variables
-	let wrapper_attributes = fn_attributes;
 	let wrapper_signature = fn_signature;
 	let wrapped_signature = wrapper_signature.rename("wrapped".to_owned());
 
 	// build the wrapped fn.
-	let output = wrap(wrapper_attributes, wrapper_signature, wrapped_signature);
+	let output = wrap(wrapper_signature, wrapped_signature);
 
 	println!("{}", output.to_string());
 
 	output.into()
 }
 
-fn wrap(wrapper_attributes: TokenStream2, wrapper_signature: Function, wrapped_signature: Function) -> TokenStream2 {
+fn wrap(wrapper_signature: Function, wrapped_signature: Function) -> TokenStream2 {
 	let span = proc_macro2::Span::call_site();
 
+	let wrapper_attributes = TokenStream2::from_iter(wrapper_signature.attributes.clone().into_iter());
 	let wrapped_fn = wrapped_signature.body.clone();
 	let wrapped_call = wrapped_signature.call(wrapped_signature.argument_names().as_slice());
 
@@ -54,20 +53,4 @@ fn wrap(wrapper_attributes: TokenStream2, wrapper_signature: Function, wrapped_s
 	};
 
 	output
-}
-
-fn get_fn_attributes(stream: TokenStream2) -> TokenStream2 {
-	let mut tokens = Vec::new();
-
-	let mut iter = stream.into_iter();
-	while let Some(token) = iter.next() {
-		if let TokenTree::Ident(ident) = &token {
-			if ident == "pub" || ident == "async" || ident == "fn" {
-				break;
-			}
-		}
-		tokens.push(token);
-	}
-
-	TokenStream2::from_iter(tokens.into_iter())
 }
