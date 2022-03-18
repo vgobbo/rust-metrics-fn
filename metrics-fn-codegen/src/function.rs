@@ -1,3 +1,6 @@
+use std::iter::Peekable;
+
+use proc_macro2::token_stream::IntoIter;
 use proc_macro2::{Delimiter, Group, Ident, Punct, Spacing, TokenStream as TokenStream2, TokenTree};
 use quote::{ToTokens, TokenStreamExt};
 
@@ -6,6 +9,7 @@ pub struct Function {
 	pub is_pub: bool,
 	pub is_async: bool,
 	pub name: String,
+	pub attributes: Vec<TokenTree>,
 	pub arguments: Group,
 	pub body: Group,
 }
@@ -22,6 +26,7 @@ impl Function {
 			is_pub: self.is_pub,
 			is_async: self.is_async,
 			name,
+			attributes: self.attributes.clone(),
 			arguments: self.arguments.clone(),
 			body: self.body.clone(),
 		}
@@ -137,6 +142,24 @@ impl Function {
 			false
 		}
 	}
+
+	fn parse_attributes(iter: &mut Peekable<IntoIter>) -> Vec<TokenTree> {
+		let mut tokens = Vec::new();
+
+		loop {
+			if let Some(token) = iter.peek() {
+				if let TokenTree::Ident(ident) = &token {
+					if ident == "pub" || ident == "async" || ident == "fn" {
+						break;
+					}
+				}
+			}
+
+			tokens.push(iter.next().unwrap());
+		}
+
+		tokens
+	}
 }
 
 impl Default for Function {
@@ -145,6 +168,7 @@ impl Default for Function {
 			is_pub: false,
 			is_async: false,
 			name: "".to_owned(),
+			attributes: Vec::new(),
 			arguments: Group::new(Delimiter::Parenthesis, TokenStream2::new()),
 			body: Group::new(Delimiter::Brace, TokenStream2::new()),
 		}
@@ -155,7 +179,9 @@ impl From<TokenStream2> for Function {
 	fn from(stream: TokenStream2) -> Self {
 		let mut function = Function::default();
 
-		let mut iter = stream.into_iter();
+		let mut iter = stream.into_iter().peekable();
+		function.attributes = Function::parse_attributes(&mut iter);
+
 		while let Some(token) = iter.next() {
 			match token {
 				TokenTree::Ident(ident) => {
