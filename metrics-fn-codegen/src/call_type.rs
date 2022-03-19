@@ -1,5 +1,6 @@
 use std::fmt::{Display, Formatter};
 
+use proc_macro2::{Ident, Span};
 use syn::FnArg::Receiver;
 use syn::Signature;
 
@@ -9,6 +10,18 @@ pub enum CallType {
 	ReferenceSelf,
 	OwnedMutableSelf,
 	ReferenceMutableSelf,
+}
+
+impl CallType {
+	pub fn ident(&self, span: Span) -> Option<Ident> {
+		match self {
+			CallType::None => None,
+			CallType::OwnedSelf => Some(Ident::new("self", span)),
+			CallType::ReferenceSelf => Some(Ident::new("&self", span)),
+			CallType::OwnedMutableSelf => Some(Ident::new("mut self", span)),
+			CallType::ReferenceMutableSelf => Some(Ident::new("&mut self", span)),
+		}
+	}
 }
 
 impl From<&Signature> for CallType {
