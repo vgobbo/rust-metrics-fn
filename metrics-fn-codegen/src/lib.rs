@@ -1,7 +1,9 @@
 use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
-use quote::quote_spanned;
+use quote::{quote_spanned, ToTokens};
+use syn::parse_macro_input;
 
+mod call_type;
 mod function;
 
 use function::*;
@@ -13,34 +15,29 @@ pub fn dummy(_attr: TokenStream, item: TokenStream) -> TokenStream {
 
 #[proc_macro_attribute]
 pub fn measure(_attr: TokenStream, item: TokenStream) -> TokenStream {
-	let item = TokenStream2::from(item);
-
-	// parse the fn.
-	let function = Function::from(item.clone());
-
-	// map the fn to wrapper and wrapped variables
-	let wrapper_fn = function;
-	let wrapped_fn = wrapper_fn.rename("wrapped".to_owned());
-
-	// build the wrapped fn.
-	let output = wrap(wrapper_fn, wrapped_fn);
-
-	println!("{}", output.to_string());
-
-	output.into()
-}
-
-fn wrap(wrapper_fn: Function, wrapped_fn: Function) -> TokenStream2 {
 	let span = proc_macro2::Span::call_site();
 
-	let wrapper_attributes = TokenStream2::from_iter(wrapper_fn.attributes.clone().into_iter());
-	let wrapped_body = wrapped_fn.body.clone();
-	let wrapped_call = wrapped_fn.call(wrapped_fn.argument_names().as_slice());
+	let original_fn = parse_macro_input!(item as Function);
+	let wrapped_fn = original_fn.rename("wrapped");
+
+	let attr_tokens = TokenStream2::from_iter(
+		original_fn
+			.function
+			.attrs
+			.iter()
+			.map(|attr| attr.into_token_stream().into_iter())
+			.flatten(),
+	);
+	let wrapped_call = wrapped_fn.call(span);
+	let wrapped_sig_tokens = wrapped_fn.function.sig.into_token_stream();
+	let wrapped_body_tokens = original_fn.function.block.into_token_stream();
+	let wrapper_sig_tokens = original_fn.function.sig.into_token_stream();
 
 	let output = quote_spanned! { span =>
-		#wrapper_attributes
-		#wrapper_fn {
-			#wrapped_fn #wrapped_body
+		#attr_tokens
+		#wrapper_sig_tokens {
+			#wrapped_sig_tokens
+			#wrapped_body_tokens
 
 			let start__ = std::time::Instant::now();
 			let output__ = #wrapped_call;
@@ -52,5 +49,5 @@ fn wrap(wrapper_fn: Function, wrapped_fn: Function) -> TokenStream2 {
 		}
 	};
 
-	output
+	output.into()
 }
