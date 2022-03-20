@@ -1,5 +1,4 @@
 use proc_macro::TokenStream;
-use proc_macro2::TokenStream as TokenStream2;
 use quote::{quote_spanned, ToTokens};
 use syn::parse_macro_input;
 
@@ -20,21 +19,14 @@ pub fn measure(_attr: TokenStream, item: TokenStream) -> TokenStream {
 	let original_fn = parse_macro_input!(item as Function);
 	let wrapped_fn = original_fn.rename("wrapped");
 
-	let attr_tokens = TokenStream2::from_iter(
-		original_fn
-			.function
-			.attrs
-			.iter()
-			.map(|attr| attr.into_token_stream().into_iter())
-			.flatten(),
-	);
+	let wrapped_attrs_tokens = original_fn.attributes_tokens();
 	let wrapped_call = wrapped_fn.call(span);
 	let wrapped_sig_tokens = wrapped_fn.function.sig.into_token_stream();
 	let wrapped_body_tokens = original_fn.function.block.into_token_stream();
 	let wrapper_sig_tokens = original_fn.function.sig.into_token_stream();
 
 	let output = quote_spanned! { span =>
-		#attr_tokens
+		#wrapped_attrs_tokens
 		#wrapper_sig_tokens {
 			#wrapped_sig_tokens
 			#wrapped_body_tokens

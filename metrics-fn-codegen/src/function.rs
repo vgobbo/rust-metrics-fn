@@ -43,6 +43,16 @@ impl Function {
 			.collect()
 	}
 
+	pub fn attributes_tokens(&self) -> TokenStream {
+		TokenStream::from_iter(
+			self.function
+				.attrs
+				.iter()
+				.map(|attr| attr.clone().into_token_stream().into_iter())
+				.flatten(),
+		)
+	}
+
 	pub fn call(&self, span: Span) -> TokenStream {
 		let mut tokens = Vec::new();
 		tokens.push(TokenTree::Ident(self.function.sig.ident.clone()));
