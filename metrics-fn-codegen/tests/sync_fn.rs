@@ -30,3 +30,13 @@ pub fn no_args() {
 
 	some_method();
 }
+
+#[test]
+pub fn with_result() {
+	#[measure]
+	fn sum(a: u32, b: u32) -> u32 {
+		a + b
+	}
+
+	assert_eq!(3, sum(1, 2));
+}
