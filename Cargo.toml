@@ -1,5 +1,6 @@
 [workspace]
 members = [
+	"metrics-fn",
 	"metrics-fn-codegen",
 	"metrics-fn-prometheus",
 	"metrics-fn-log",
