@@ -50,7 +50,7 @@ impl Function {
 
 		if self.function.sig.asyncness.is_some() {
 			tokens.push(TokenTree::Punct(Punct::new('.', Spacing::Alone)));
-			tokens.push(TokenTree::Ident(Ident::new("async", span)));
+			tokens.push(TokenTree::Ident(Ident::new("await", span)));
 		}
 
 		TokenStream::from_iter(tokens.into_iter())
