@@ -3,6 +3,7 @@ members = [
 	"metrics-fn-codegen",
 	"metrics-fn-prometheus",
 	"metrics-fn-log",
+	"metrics-fn-example",
 ]
 
 [profile.release]
