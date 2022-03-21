@@ -1,6 +1,6 @@
 use log::info;
 
-pub fn record<T>(module: &str, result: Result<(), T>, elapsed_ns: f64)
+pub fn record<T>(module: &str, result: &Result<(), T>, elapsed_s: f64)
 where
 	T: ToString,
 {
@@ -9,5 +9,5 @@ where
 		Err(value) => value.to_string(),
 	};
 
-	info!("{} {} {}", module, result_text, elapsed_ns);
+	info!("{} {} {}", module, result_text, elapsed_s);
 }

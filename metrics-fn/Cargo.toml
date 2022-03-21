@@ -6,7 +6,9 @@ edition = "2021"
 [dependencies]
 metrics-fn-codegen = { path = "../metrics-fn-codegen" }
 metrics-fn-log = { path = "../metrics-fn-log", optional = true }
+metrics-fn-prometheus = { path = "../metrics-fn-prometheus", optional = true }
 
 [features]
 default = []
 log = [ "metrics-fn-log" ]
+prometheus = [ "metrics-fn-prometheus" ]
