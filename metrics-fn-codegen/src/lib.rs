@@ -20,7 +20,7 @@ pub fn measure(_attr: TokenStream, item: TokenStream) -> TokenStream {
 	let wrapped_fn = original_fn.rename("wrapped");
 
 	let wrapped_attrs_tokens = original_fn.attributes_tokens();
-	let wrapped_call = wrapped_fn.call(span);
+	let wrapped_call_tokens = wrapped_fn.call(span);
 	let wrapped_sig_tokens = wrapped_fn.function.sig.into_token_stream();
 	let wrapped_body_tokens = original_fn.function.block.into_token_stream();
 	let wrapper_sig_tokens = original_fn.function.sig.into_token_stream();
@@ -32,7 +32,7 @@ pub fn measure(_attr: TokenStream, item: TokenStream) -> TokenStream {
 			#wrapped_body_tokens
 
 			let start__ = std::time::Instant::now();
-			let output__ = #wrapped_call;
+			let output__ = #wrapped_call_tokens;
 			let end__ = std::time::Instant::now();
 
 			let module_name = module_path!();
