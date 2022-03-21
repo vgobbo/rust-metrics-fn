@@ -4,4 +4,5 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+lazy_static = {version = "1.4" }
 prometheus = { version = "0.13" }
