@@ -1,6 +1,6 @@
 use proc_macro::TokenStream;
 use quote::{quote_spanned, ToTokens};
-use syn::parse_macro_input;
+use syn::{parse_macro_input, AttributeArgs};
 
 mod call_type;
 mod function;
@@ -13,8 +13,16 @@ pub fn dummy(_attr: TokenStream, item: TokenStream) -> TokenStream {
 }
 
 #[proc_macro_attribute]
-pub fn measure(_attr: TokenStream, item: TokenStream) -> TokenStream {
+pub fn measure(attrs: TokenStream, item: TokenStream) -> TokenStream {
 	let span = proc_macro2::Span::call_site();
+
+	let attrs = parse_macro_input!(attrs as AttributeArgs);
+
+	if attrs.len() > 0 {
+		return syn::Error::new(span, "#[measure] does not take arguments.")
+			.to_compile_error()
+			.into();
+	}
 
 	let original_fn = parse_macro_input!(item as Function);
 	let wrapped_fn = original_fn.rename("wrapped");
