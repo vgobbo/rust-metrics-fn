@@ -5,6 +5,7 @@ members = [
 	"metrics-fn-prometheus",
 	"metrics-fn-log",
 	"metrics-fn-example",
+	"metrics-fn-example-prometheus",
 ]
 
 [profile.release]
