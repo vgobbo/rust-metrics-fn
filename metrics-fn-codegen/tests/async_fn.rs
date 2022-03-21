@@ -42,3 +42,12 @@ pub async fn with_result() {
 
 	assert_eq!(3, sum(1, 2).await);
 }
+
+mod metrics_fn {
+	pub fn record<T>(_: &str, _: Result<(), T>, _: f64)
+	where
+		T: ToString,
+	{
+		// do nothing.
+	}
+}
