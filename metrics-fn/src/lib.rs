@@ -1,8 +1,9 @@
-#[cfg(test)]
-mod tests {
-	#[test]
-	fn it_works() {
-		let result = 2 + 2;
-		assert_eq!(result, 4);
-	}
+pub use metrics_fn_codegen::measure;
+
+#[cfg(feature = "log")]
+pub fn record<T>(module: &str, result: Result<(), T>, elapsed_ns: f64)
+where
+	T: ToString,
+{
+	metrics_fn_log::record(module, result, elapsed_ns);
 }
