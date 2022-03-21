@@ -35,7 +35,8 @@ pub fn measure(_attr: TokenStream, item: TokenStream) -> TokenStream {
 			let output__ = #wrapped_call;
 			let end__ = std::time::Instant::now();
 
-			println!("Time {:?}", end__.duration_since(start__));
+			let module_name = module_path!();
+			metrics_fn::record::<String>(module_name, Ok(()), end__.duration_since(start__).as_secs_f64());
 
 			return output__;
 		}
