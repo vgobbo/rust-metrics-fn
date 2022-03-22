@@ -1,4 +1,6 @@
 mod delay;
+mod fortunes;
+mod fortunes_repository;
 mod hello;
 
 #[macro_use]
@@ -29,6 +31,7 @@ async fn main() -> Result<(), rocket::Error> {
 		.mount("/", routes![metrics])
 		.mount("/hello", hello::routes())
 		.mount("/delay", delay::routes())
+		.mount("/fortunes", fortunes::routes())
 		.ignite()
 		.await?
 		.launch()
