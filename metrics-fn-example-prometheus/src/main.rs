@@ -10,20 +10,20 @@ use rocket::http::{ContentType, MediaType, Status};
 use rocket::response::content::Custom;
 use rocket::tokio::time::{sleep, Duration};
 
-#[get("/")]
 #[measure]
+#[get("/")]
 async fn hello_world() -> &'static str {
 	"Hello, world!"
 }
 
-#[get("/hello/<name>")]
 #[measure]
+#[get("/hello/<name>")]
 async fn hello_name(name: String) -> String {
 	format!("Hello, {}!", name)
 }
 
-#[get("/delay")]
 #[measure]
+#[get("/delay")]
 async fn delay_random_ms() -> String {
 	// no more than 20 seconds.
 	let ms = (rand::random::<u32>() % 20_000) as u64;
@@ -32,15 +32,15 @@ async fn delay_random_ms() -> String {
 	format!("Waited for {}ms", ms)
 }
 
-#[get("/delay/<ms>")]
 #[measure]
+#[get("/delay/<ms>")]
 async fn delay_ms(ms: u64) -> String {
 	sleep(Duration::from_millis(ms)).await;
 	format!("Waited for {}ms", ms)
 }
 
-#[get("/metrics")]
 #[measure]
+#[get("/metrics")]
 async fn metrics() -> Result<Custom<String>, Status> {
 	let metric_families = prometheus::gather();
 	let encoder = TextEncoder::new();
