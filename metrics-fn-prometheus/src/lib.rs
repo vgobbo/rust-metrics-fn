@@ -11,7 +11,7 @@ lazy_static! {
 	.unwrap();
 }
 
-pub fn record<T>(module: &str, result: &Result<(), T>, elapsed_s: f64)
+pub fn record<T>(module: &str, fn_name: &str, result: &Result<(), T>, elapsed_s: f64)
 where
 	T: ToString,
 {
@@ -20,6 +20,6 @@ where
 		Err(value) => value.to_string(),
 	};
 
-	let labels = &[module, "", result_text.as_str()];
+	let labels = &[module, fn_name, result_text.as_str()];
 	APPLICATION_METHOD_TIMINGS.with_label_values(labels).observe(elapsed_s);
 }

@@ -29,6 +29,7 @@ pub fn measure(attrs: TokenStream, item: TokenStream) -> TokenStream {
 
 	let wrapped_attrs_tokens = original_fn.attributes_tokens();
 	let wrapped_call_tokens = wrapped_fn.call(span);
+	let wrapped_call_fn_name = original_fn.function.sig.ident.clone().to_string();
 	let wrapped_sig_tokens = wrapped_fn.function.sig.into_token_stream();
 	let wrapped_body_tokens = original_fn.function.block.into_token_stream();
 	let wrapper_sig_tokens = original_fn.function.sig.into_token_stream();
@@ -44,7 +45,7 @@ pub fn measure(attrs: TokenStream, item: TokenStream) -> TokenStream {
 			let end__ = std::time::Instant::now();
 
 			let module_name = module_path!();
-			metrics_fn::record::<String>(module_name, Ok(()), end__.duration_since(start__).as_secs_f64());
+			metrics_fn::record::<String>(module_name, #wrapped_call_fn_name, Ok(()), end__.duration_since(start__).as_secs_f64());
 
 			return output__;
 		}
