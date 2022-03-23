@@ -25,6 +25,13 @@ impl CallType {
 		}
 	}
 
+	pub fn has_self(&self) -> bool {
+		match self {
+			CallType::None => false,
+			_ => true,
+		}
+	}
+
 	fn token_mut(span: Span) -> TokenTree {
 		TokenTree::from(Ident::new("mut", span))
 	}
