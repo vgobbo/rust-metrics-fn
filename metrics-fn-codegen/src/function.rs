@@ -86,7 +86,11 @@ impl Function {
 
 		let mut tokens = Vec::new();
 
-		tokens.extend(self.call_type.tokens(span));
+		let self_tokens = self.call_type.tokens(span);
+		if !self_tokens.is_empty() {
+			tokens.extend(self.call_type.tokens(span));
+			tokens.push(TokenTree::Punct(Punct::new(',', Spacing::Alone)));
+		}
 
 		let ident_tokens: Vec<_> = names
 			.into_iter()
