@@ -3,7 +3,7 @@ use std::fmt::{Display, Formatter};
 use proc_macro2::{Delimiter, Group, Ident, Punct, Spacing, Span, TokenStream, TokenTree};
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
-use syn::{FnArg, ItemFn, Pat};
+use syn::{FnArg, ItemFn, Pat, Visibility};
 
 use crate::call_type::CallType;
 
@@ -18,6 +18,21 @@ impl Function {
 			call_type: CallType::from(&item.sig),
 			function: item,
 		}
+	}
+
+	pub fn signature_full(&self) -> TokenStream {
+		let mut tokens = TokenStream::new();
+
+		let visibility: TokenStream = match self.function.vis.clone() {
+			Visibility::Inherited => TokenStream::new(),
+			Visibility::Crate(vis) => vis.into_token_stream(),
+			Visibility::Public(vis) => vis.into_token_stream(),
+			Visibility::Restricted(vis) => vis.into_token_stream(),
+		};
+		tokens.extend(visibility);
+
+		tokens.extend(self.function.sig.clone().into_token_stream());
+		tokens
 	}
 
 	pub fn rename(&self, new_name: &str) -> Function {
