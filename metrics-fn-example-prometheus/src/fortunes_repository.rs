@@ -33,6 +33,7 @@ impl FortunesRepository {
 		FortunesRepository {}
 	}
 
+	#[measure]
 	pub fn random(&self) -> String {
 		let index = rand::random::<usize>() % FORTUNES.len();
 		FORTUNES.get(index).unwrap().to_owned()
