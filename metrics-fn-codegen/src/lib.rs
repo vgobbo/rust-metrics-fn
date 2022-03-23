@@ -17,7 +17,6 @@ pub fn measure(attrs: TokenStream, item: TokenStream) -> TokenStream {
 	let span = proc_macro2::Span::call_site();
 
 	let attrs = parse_macro_input!(attrs as AttributeArgs);
-
 	if attrs.len() > 0 {
 		return syn::Error::new(span, "#[measure] does not take arguments.")
 			.to_compile_error()
