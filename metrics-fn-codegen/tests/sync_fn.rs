@@ -42,7 +42,7 @@ pub fn with_result() {
 }
 
 mod metrics_fn {
-	pub fn record<T>(_: &str, _: Result<(), T>, _: f64)
+	pub fn record<T>(_: &str, _: &str, _: Result<(), T>, _: f64)
 	where
 		T: ToString,
 	{
