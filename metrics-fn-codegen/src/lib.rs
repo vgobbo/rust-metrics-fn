@@ -25,20 +25,19 @@ pub fn measure(attrs: TokenStream, item: TokenStream) -> TokenStream {
 	}
 
 	let original_fn = parse_macro_input!(item as Function);
-	let wrapped_fn = original_fn.rename("wrapped");
+	let wrapped_fn =
+		original_fn.rename(format!("{}__{}", original_fn.function.sig.ident.clone().to_string(), "wrapped").as_str());
 
 	let wrapped_attrs_tokens = original_fn.attributes_tokens();
 	let wrapped_call_tokens = wrapped_fn.call(span);
 	let wrapped_call_fn_name = original_fn.function.sig.ident.clone().to_string();
 	let wrapped_sig_tokens = wrapped_fn.function.sig.into_token_stream();
-	let wrapped_body_tokens = original_fn.function.block.into_token_stream();
-	let wrapper_sig_tokens = original_fn.function.sig.into_token_stream();
+	let wrapped_body_tokens = original_fn.function.block.clone().into_token_stream();
+	let wrapper_sig_tokens = original_fn.signature_full();
 
 	let output = quote_spanned! { span =>
 		#wrapped_attrs_tokens
 		#wrapper_sig_tokens {
-			#wrapped_sig_tokens
-			#wrapped_body_tokens
 
 			let start__ = std::time::Instant::now();
 			let output__ = #wrapped_call_tokens;
@@ -49,6 +48,10 @@ pub fn measure(attrs: TokenStream, item: TokenStream) -> TokenStream {
 
 			return output__;
 		}
+
+		#[allow(non_snake_case)]
+		#wrapped_sig_tokens
+		#wrapped_body_tokens
 	};
 
 	output.into()
