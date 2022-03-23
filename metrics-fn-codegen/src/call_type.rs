@@ -1,6 +1,6 @@
 use std::fmt::{Display, Formatter};
 
-use proc_macro2::{Ident, Span};
+use proc_macro2::{Ident, Punct, Spacing, Span, TokenTree};
 use syn::FnArg::Receiver;
 use syn::Signature;
 
@@ -13,14 +13,28 @@ pub enum CallType {
 }
 
 impl CallType {
-	pub fn ident(&self, span: Span) -> Option<Ident> {
+	pub fn tokens(&self, span: Span) -> Vec<TokenTree> {
 		match self {
-			CallType::None => None,
-			CallType::OwnedSelf => Some(Ident::new("self", span)),
-			CallType::ReferenceSelf => Some(Ident::new("&self", span)),
-			CallType::OwnedMutableSelf => Some(Ident::new("mut self", span)),
-			CallType::ReferenceMutableSelf => Some(Ident::new("&mut self", span)),
+			CallType::None => vec![],
+			CallType::OwnedSelf => vec![Self::token_self(span)],
+			CallType::ReferenceSelf => vec![Self::token_reference(), Self::token_self(span)],
+			CallType::OwnedMutableSelf => vec![Self::token_mut(span), Self::token_self(span)],
+			CallType::ReferenceMutableSelf => {
+				vec![Self::token_reference(), Self::token_mut(span), Self::token_self(span)]
+			},
 		}
+	}
+
+	fn token_mut(span: Span) -> TokenTree {
+		TokenTree::from(Ident::new("mut", span))
+	}
+
+	fn token_self(span: Span) -> TokenTree {
+		TokenTree::from(Ident::new("self", span))
+	}
+
+	fn token_reference() -> TokenTree {
+		TokenTree::from(Punct::new('&', Spacing::Alone))
 	}
 }
 
