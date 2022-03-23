@@ -70,6 +70,12 @@ impl Function {
 
 	pub fn call(&self, span: Span) -> TokenStream {
 		let mut tokens = Vec::new();
+
+		if self.call_type.has_self() {
+			tokens.push(TokenTree::from(Ident::new("self", span)));
+			tokens.push(TokenTree::from(Punct::new('.', Spacing::Alone)));
+		}
+
 		tokens.push(TokenTree::Ident(self.function.sig.ident.clone()));
 		tokens.push(self.call_arguments(span));
 
@@ -85,12 +91,6 @@ impl Function {
 		let names = self.argument_names();
 
 		let mut tokens = Vec::new();
-
-		let self_tokens = self.call_type.tokens(span);
-		if !self_tokens.is_empty() {
-			tokens.extend(self.call_type.tokens(span));
-			tokens.push(TokenTree::Punct(Punct::new(',', Spacing::Alone)));
-		}
 
 		let ident_tokens: Vec<_> = names
 			.into_iter()
