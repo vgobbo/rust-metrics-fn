@@ -13,6 +13,7 @@ pub enum CallType {
 }
 
 impl CallType {
+	#[allow(dead_code)]
 	pub fn tokens(&self, span: Span) -> Vec<TokenTree> {
 		match self {
 			CallType::None => vec![],
@@ -32,14 +33,17 @@ impl CallType {
 		}
 	}
 
+	#[allow(dead_code)]
 	fn token_mut(span: Span) -> TokenTree {
 		TokenTree::from(Ident::new("mut", span))
 	}
 
+	#[allow(dead_code)]
 	fn token_self(span: Span) -> TokenTree {
 		TokenTree::from(Ident::new("self", span))
 	}
 
+	#[allow(dead_code)]
 	fn token_reference() -> TokenTree {
 		TokenTree::from(Punct::new('&', Spacing::Alone))
 	}
