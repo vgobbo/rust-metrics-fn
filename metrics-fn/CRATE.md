@@ -31,6 +31,8 @@ This metric has the following labels:
 
 The following buckets are used: 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0.
 
+See [metrics-fn-example-prometheus](../metrics-fn-example-prometheus) for an example.
+
 ## To-Do List
 
 The following are planned features, by priority:
