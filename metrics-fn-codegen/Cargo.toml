@@ -2,6 +2,13 @@
 name = "metrics-fn-codegen"
 version = "0.1.0"
 edition = "2021"
+description = "Code generation module for Function Metrics."
+homepage = "https://github.com/vgobbo/rust-metrics-fn"
+repository = "https://github.com/vgobbo/rust-metrics-fn"
+readme = "CRATE.md"
+license = "MIT OR Apache-2.0"
+keywords = [ "hue" ]
+authors = [ "Vinicius Gobbo Antunes de Oliveira <vgobbo@gmail.com>" ]
 
 [lib]
 proc-macro = true
