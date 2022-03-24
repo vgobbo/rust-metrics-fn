@@ -22,14 +22,13 @@ A nightly profile is also required. Ensure you have one installed by running:
 ```bash
 $ rustup show
 Default host: x86_64-unknown-linux-gnu
-rustup home:  /home/vgobbo/.rustup
+rustup home:  /home/user/.rustup
 
 installed toolchains
 --------------------
 
 stable-x86_64-unknown-linux-gnu (default)
 nightly-x86_64-unknown-linux-gnu
-gentoo
 
 installed targets for active toolchain
 --------------------------------------
