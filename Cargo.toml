@@ -2,7 +2,7 @@
 members = [
 	"metrics-fn",
 	"metrics-fn-codegen",
-	"metrics-fn-example",
+	"metrics-fn-example-log",
 	"metrics-fn-example-prometheus",
 ]
 
