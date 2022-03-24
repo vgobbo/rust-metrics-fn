@@ -21,7 +21,15 @@ The following metrics systems are currently supported:
 
 ### Prometheus Recorder
 
-_PENDING_
+The Prometheus recorder collects metrics about the functions annotated with `#[measure]` to the `application_method_timings` histogram metric.
+
+This metric has the following labels:
+
+- `mod`: module name.
+- `fn`: function name.
+- `res`: result (always `Ok` for now).
+
+The following buckets are used: 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0.
 
 ## To-Do List
 
