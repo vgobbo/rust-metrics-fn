@@ -4,11 +4,12 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+lazy_static = {version = "1.4", optional = true }
+log = { version = "0.4", optional = true }
 metrics-fn-codegen = { path = "../metrics-fn-codegen" }
-metrics-fn-log = { path = "../metrics-fn-log", optional = true }
-metrics-fn-prometheus = { path = "../metrics-fn-prometheus", optional = true }
+prometheus = { version = "0.13", optional = true }
 
 [features]
 default = []
-log = [ "metrics-fn-log" ]
-prometheus = [ "metrics-fn-prometheus" ]
+record-log = [ "log" ]
+record-prometheus = [ "prometheus", "lazy_static" ]
