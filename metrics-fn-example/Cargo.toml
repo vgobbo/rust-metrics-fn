@@ -5,5 +5,5 @@ edition = "2021"
 
 [dependencies]
 log = "0.4"
-metrics-fn = { path = "../metrics-fn", features = [ "log" ] }
+metrics-fn = { path = "../metrics-fn", features = [ "record-log" ] }
 simple_logger = { version = "2.1" }
