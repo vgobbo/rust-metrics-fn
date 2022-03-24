@@ -13,7 +13,7 @@ metrics-fn = { version = "0.1", features = [ "record-prometheus" ] }
 
 The metrics are collected and sent to _recorders_, which can integrate with metrics systems like Prometheus.
 
-In order to keep dependencies to a minimum, for each recorder there is an accompanying feature. These features are composed by `record-` and metrics system it enables.  **By default, all records are disabled**.
+In order to keep dependencies to a minimum, for each recorder there is an accompanying feature. These features are composed by `record-` and metrics system it enables.  **By default, all recorders are disabled**.
 
 The following metrics systems are currently supported:
 - Log (`record-log`): simply log the collected metrics, using `log::info!`; not really a metric collection system.
