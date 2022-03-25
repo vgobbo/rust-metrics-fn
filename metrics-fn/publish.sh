@@ -59,11 +59,10 @@ toml="Cargo.toml"
 crate_version=$(get_crate_version "$toml")
 majmin_version=$(get_version_major_minor "$crate_version")
 dep_name='metrics-fn-codegen'
-dep_development_value='{ path = "../metrics-fn-codegen" }'
-dep_development="$dep_name = $dep_development_value"
 dep_publish_value="{ version = \"$majmin_version\" }"
 git_tag="v$crate_version"
-git_commit_msg="Release $crate_version."
+git_commit_publish_msg="Release $crate_version."
+git_commit_restore_msg="Restoring development dependency."
 toml_original=$(cat "$toml")
 toml_publish=$(replace_dependency "$toml" "$dep_name" "$dep_publish_value")
 
@@ -84,6 +83,15 @@ fi
 
 echo "Commiting and tagging."
 git add "$toml"
-git commit -m "$git_commit_msg"
+git commit -m "$git_commit_publish_msg"
 git tag "$git_tag"
 git push --all
+
+echo "Publishing."
+cargo publish
+
+echo "Restoring development $toml."
+echo "$toml_original" > "$toml"
+git add "$toml"
+git commit -m "$git_commit_restore_msg"
+git push
