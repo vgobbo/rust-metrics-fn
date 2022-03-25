@@ -72,6 +72,7 @@ echo "==========================================================================
 echo "Validate the above information carefully before publishing version $crate_version."
 if ! prompt 'Would you like to proceed?'; then
   echo "Aborted."
+  exit 1
 fi
 
 echo "$toml_publish" > "$toml"
