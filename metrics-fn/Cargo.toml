@@ -2,6 +2,13 @@
 name = "metrics-fn"
 version = "0.1.0"
 edition = "2021"
+description = "Rust Function Metrics runtime module."
+homepage = "https://github.com/vgobbo/rust-metrics-fn"
+repository = "https://github.com/vgobbo/rust-metrics-fn"
+readme = "CRATE.md"
+license = "MIT OR Apache-2.0"
+keywords = [ "metrics" ]
+authors = [ "Vinicius Gobbo Antunes de Oliveira <vgobbo@gmail.com>" ]
 
 [dependencies]
 lazy_static = {version = "1.4", optional = true }
