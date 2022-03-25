@@ -7,7 +7,7 @@ homepage = "https://github.com/vgobbo/rust-metrics-fn"
 repository = "https://github.com/vgobbo/rust-metrics-fn"
 readme = "CRATE.md"
 license = "MIT OR Apache-2.0"
-keywords = [ "hue" ]
+keywords = [ "macro", "codegen", "metrics" ]
 authors = [ "Vinicius Gobbo Antunes de Oliveira <vgobbo@gmail.com>" ]
 
 [lib]
