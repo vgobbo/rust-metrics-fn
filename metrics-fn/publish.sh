@@ -9,6 +9,14 @@ git_ensure_clean() {
   fi
 }
 
+git_ensure_main() {
+  branch=$(git branch --show-current)
+  if [ "main" != "$branch" ]; then
+    echo "Not in main branch."
+    exit 1;
+  fi
+}
+
 get_crate_version() {
   # Basic pattern matching to extract crate version. Will definitely break one day.
   version=$(sed -E -n 's/^version = "([[:digit:]]\.[[:digit:]]\.[[:digit:]])"\s*$/\1/p' < "$1")
@@ -45,6 +53,7 @@ prompt() {
 
 
 git_ensure_clean
+git_ensure_main
 
 toml="Cargo.toml"
 crate_version=$(get_crate_version "$toml")
@@ -55,6 +64,7 @@ dep_development="$dep_name = $dep_development_value"
 dep_publish_value="{ version = \"$majmin_version\" }"
 git_tag="v$crate_version"
 git_commit_msg="Release $crate_version."
+toml_original=$(cat "$toml")
 toml_publish=$(replace_dependency "$toml" "$dep_name" "$dep_publish_value")
 
 echo "$toml_publish"
@@ -71,3 +81,9 @@ if ! cargo publish --dry-run --allow-dirty; then
   echo "No changes performed. Aborted."
   exit 1
 fi
+
+echo "Commiting and tagging."
+git add "$toml"
+git commit -m "$git_commit_msg"
+git tag "$git_tag"
+git push --all
