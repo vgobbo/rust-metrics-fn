@@ -66,7 +66,7 @@ if ! prompt 'Would you like to proceed?'; then
 fi
 
 echo "$toml_publish" > "$toml"
-if ! cargo publish --dry-run; then
+if ! cargo publish --dry-run --allow-dirty; then
   git restore "$toml"
   echo "No changes performed. Aborted."
   exit 1
