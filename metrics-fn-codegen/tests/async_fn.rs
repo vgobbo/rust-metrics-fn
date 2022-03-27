@@ -44,10 +44,7 @@ pub async fn with_result() {
 }
 
 mod metrics_fn {
-	pub fn record<T>(_: &str, _: &str, _: Result<(), T>, _: f64)
-	where
-		T: ToString,
-	{
+	pub fn record(_: &str, _: &str, _: Result<(), ()>, _: f64) {
 		// do nothing.
 	}
 }
