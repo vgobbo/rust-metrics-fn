@@ -43,6 +43,7 @@ See [metrics-fn-example-prometheus](../metrics-fn-example-prometheus) for an exa
 
 The following are planned features, by priority:
 
+**This list is not a commitment: items might be added or removed of the list.**
+ 
 - **[MEDIUM]** Record type name associated with `impl`.
 - **[LOW]** Configurable Prometheus metrics names and buckets.
-- **[DONE]** Record `core::result::Result` successes/errors.
