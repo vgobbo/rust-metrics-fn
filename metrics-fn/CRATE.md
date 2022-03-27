@@ -37,7 +37,6 @@ See [metrics-fn-example-prometheus](../metrics-fn-example-prometheus) for an exa
 
 The following are planned features, by priority:
 
-- **[HIGH]** Record `std::Result` successes/errors.
 - **[MEDIUM]** Record type name associated with `impl`.
-- **[LOW]** Record detailed metrics for `std::Result` errors (in particular if `E` is `enum`).
 - **[LOW]** Configurable Prometheus metrics names and buckets.
+- **[DONE]** Record `core::result::Result` successes/errors.
