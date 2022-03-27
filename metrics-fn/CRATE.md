@@ -35,6 +35,10 @@ In order to expose the collected metrics, a web application framework like [Rock
 
 See [metrics-fn-example-prometheus](../metrics-fn-example-prometheus) for an example.
 
+## Versioning
+
+[Semantic Versioning](https://semver.org/) is used. Changes to the collected metrics are also considered in the versioning.
+
 ## To-Do List
 
 The following are planned features, by priority:
