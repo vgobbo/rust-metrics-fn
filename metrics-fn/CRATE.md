@@ -27,7 +27,7 @@ This metric has the following labels:
 
 - `mod`: module name.
 - `fn`: function name.
-- `res`: result (always `Ok` for now).
+- `res`: result (`Ok` or `Err` if the annotated function result is named `Result`; always `Ok` otherwise).
 
 The following buckets are used: 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0, 2.5, 5.0, 10.0.
 
