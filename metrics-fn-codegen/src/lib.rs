@@ -1,11 +1,15 @@
 use proc_macro::TokenStream;
+use proc_macro2::{Span, TokenStream as TokenStream2};
 use quote::{quote_spanned, ToTokens};
 use syn::{parse_macro_input, AttributeArgs};
 
 mod call_type;
 mod function;
+mod return_type_classification;
 
 use function::*;
+
+use crate::return_type_classification::ReturnTypeClassification;
 
 #[proc_macro_attribute]
 pub fn dummy(_attr: TokenStream, item: TokenStream) -> TokenStream {
@@ -33,6 +37,7 @@ pub fn measure(attrs: TokenStream, item: TokenStream) -> TokenStream {
 	let wrapped_sig_tokens = wrapped_fn.function.sig.into_token_stream();
 	let wrapped_body_tokens = original_fn.function.block.clone().into_token_stream();
 	let wrapper_sig_tokens = original_fn.signature_full();
+	let record_call_tokens = build_record_call(span, original_fn, wrapped_call_fn_name);
 
 	let output = quote_spanned! { span =>
 		#wrapped_attrs_tokens
@@ -43,7 +48,7 @@ pub fn measure(attrs: TokenStream, item: TokenStream) -> TokenStream {
 			let end__ = std::time::Instant::now();
 
 			let module_name = module_path!();
-			metrics_fn::record::<String>(module_name, #wrapped_call_fn_name, Ok(()), end__.duration_since(start__).as_secs_f64());
+			#record_call_tokens
 
 			return output__;
 		}
@@ -54,4 +59,24 @@ pub fn measure(attrs: TokenStream, item: TokenStream) -> TokenStream {
 	};
 
 	output.into()
+}
+
+fn build_record_call(span: Span, original_fn: Function, wrapped_call_fn_name: String) -> TokenStream2 {
+	match original_fn.return_type() {
+		ReturnTypeClassification::Result => {
+			quote_spanned! { span =>
+				let result__: core::result::Result<(), ()> = if output__.is_ok() {
+					Ok(())
+				} else {
+					Err(())
+				};
+				metrics_fn::record(module_name, #wrapped_call_fn_name, result__, end__.duration_since(start__).as_secs_f64());
+			}
+		},
+		_ => {
+			quote_spanned! { span =>
+				metrics_fn::record(module_name, #wrapped_call_fn_name, Ok(()), end__.duration_since(start__).as_secs_f64());
+			}
+		},
+	}
 }
