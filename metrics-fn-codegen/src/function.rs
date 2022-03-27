@@ -6,6 +6,7 @@ use syn::parse::{Parse, ParseStream};
 use syn::{FnArg, ItemFn, Pat, Visibility};
 
 use crate::call_type::CallType;
+use crate::return_type_classification::ReturnTypeClassification;
 
 pub struct Function {
 	pub function: ItemFn,
@@ -109,6 +110,10 @@ impl Function {
 			Delimiter::Parenthesis,
 			TokenStream::from_iter(tokens.into_iter()),
 		))
+	}
+
+	pub fn return_type(&self) -> ReturnTypeClassification {
+		ReturnTypeClassification::from(&self.function.sig.output)
 	}
 }
 
