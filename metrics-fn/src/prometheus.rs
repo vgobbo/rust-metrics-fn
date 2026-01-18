@@ -11,7 +11,7 @@ pub fn record(_module: &str, _fn_name: &str, _result: &Result<(), ()>, _elapsed_
 #[cfg(feature = "record-prometheus")]
 mod internal {
 	use lazy_static::lazy_static;
-	use prometheus::{register_histogram_vec, HistogramVec};
+	use prometheus::{HistogramVec, register_histogram_vec};
 
 	lazy_static! {
 		static ref APPLICATION_METHOD_TIMINGS: HistogramVec = register_histogram_vec!(
