@@ -8,21 +8,15 @@ extern crate rocket;
 #[macro_use]
 extern crate metrics_fn;
 
-use std::str::FromStr;
-
-use prometheus::{TextEncoder, TEXT_FORMAT};
-use rocket::http::{ContentType, MediaType, Status};
-use rocket::response::content::Custom;
+use prometheus::TextEncoder;
 
 #[measure]
 #[get("/metrics")]
-async fn metrics() -> Result<Custom<String>, Status> {
+async fn metrics() -> String {
 	let metric_families = prometheus::gather();
 	let encoder = TextEncoder::new();
-	match encoder.encode_to_string(&metric_families) {
-		Ok(data) => Ok(Custom(ContentType(MediaType::from_str(TEXT_FORMAT).unwrap()), data)),
-		Err(_) => Err(Status::InternalServerError),
-	}
+
+	encoder.encode_to_string(&metric_families).unwrap()
 }
 
 #[rocket::main]
@@ -36,4 +30,5 @@ async fn main() -> Result<(), rocket::Error> {
 		.await?
 		.launch()
 		.await
+		.map(drop)
 }

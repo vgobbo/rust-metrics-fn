@@ -6,6 +6,6 @@ edition = "2021"
 [dependencies]
 lazy_static = { version = "1.4" }
 metrics-fn = { path = "../metrics-fn", features = [ "record-prometheus" ] }
-prometheus = { version = "0.13" }
-rand = { version = "0.8" }
-rocket = { version  = "0.5.0-rc.1" }
+prometheus = { version = "0.14" }
+rand = { version = "0.9" }
+rocket = { version  = "0.5" }

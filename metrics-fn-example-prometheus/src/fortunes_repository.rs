@@ -35,7 +35,7 @@ impl FortunesRepository {
 
 	#[measure]
 	pub fn random(&self) -> String {
-		let index = rand::random::<usize>() % FORTUNES.len();
+		let index = rand::random_range(0..FORTUNES.len());
 		FORTUNES.get(index).unwrap().to_owned()
 	}
 }

@@ -26,7 +26,6 @@ impl Function {
 
 		let visibility: TokenStream = match self.function.vis.clone() {
 			Visibility::Inherited => TokenStream::new(),
-			Visibility::Crate(vis) => vis.into_token_stream(),
 			Visibility::Public(vis) => vis.into_token_stream(),
 			Visibility::Restricted(vis) => vis.into_token_stream(),
 		};

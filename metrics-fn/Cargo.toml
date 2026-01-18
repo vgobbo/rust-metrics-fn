@@ -14,7 +14,7 @@ authors = [ "Vinicius Gobbo Antunes de Oliveira <vgobbo@gmail.com>" ]
 lazy_static = {version = "1.4", optional = true }
 log = { version = "0.4", optional = true }
 metrics-fn-codegen = { path = "../metrics-fn-codegen" }
-prometheus = { version = "0.13", optional = true }
+prometheus = { version = "0.14", optional = true }
 
 [features]
 default = []
