@@ -1,7 +1,7 @@
 [package]
 name = "metrics-fn-codegen"
-version = "0.1.1"
-edition = "2021"
+version = "0.2.0"
+edition = "2024"
 description = "Code generation module for Function Metrics."
 homepage = "https://github.com/vgobbo/rust-metrics-fn"
 repository = "https://github.com/vgobbo/rust-metrics-fn"
