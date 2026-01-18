@@ -3,10 +3,7 @@ resolver = "2"
 members = [
 	"metrics-fn",
 	"metrics-fn-codegen",
-	"metrics-fn-example-log",
-	"metrics-fn-example-prometheus",
 ]
 
-[profile.release]
-lto = true
-strip = true
+[workspace.package]
+version = "0.2.1"
