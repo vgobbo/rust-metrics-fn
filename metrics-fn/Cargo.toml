@@ -13,7 +13,7 @@ authors = [ "Vinicius Gobbo Antunes de Oliveira <vgobbo@gmail.com>" ]
 [dependencies]
 lazy_static = {version = "1.5", optional = true }
 log = { version = "0.4", optional = true }
-metrics-fn-codegen = { version = "0.2" }
+metrics-fn-codegen = { path = "../metrics-fn-codegen" }
 prometheus = { version = "0.14", optional = true }
 
 [features]
